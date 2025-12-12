@@ -60,6 +60,7 @@
   (column-number-mode)
 
   (repeat-mode)
+  (electric-pair-mode)
   
   ;; Make C-g a bit more helpful, credit to Prot:
   ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration
@@ -189,7 +190,6 @@ The DWIM behaviour of this command is as follows:
   (completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
 
 (use-package consult
-  :demand t
   ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
@@ -544,6 +544,7 @@ The DWIM behaviour of this command is as follows:
      help-mode
      compilation-mode
      eat-mode
+     "\\*shell\\*"
      "\\*eshell\\*"))
   :init
   (popper-mode 1)
@@ -585,8 +586,7 @@ The DWIM behaviour of this command is as follows:
   (setq-default goggles-pulse t))
 
 (use-package pulsar
-  :config
-  (pulsar-global-mode 1))
+  :hook (on-first-input . pulsar-global-mode))
 
 (use-package lin
   :config
@@ -614,7 +614,8 @@ The DWIM behaviour of this command is as follows:
   (logos-outlines-are-pages t)
   (logos-olivetti t))
 
-(use-package nerd-icons)
+(use-package nerd-icons
+  :defer t)
 
 (use-package nerd-icons-completion
   :after marginalia
@@ -718,6 +719,9 @@ The DWIM behaviour of this command is as follows:
   :ensure (:host github :repo "karthink/gptel-quick")
   :bind (:map fab/llm-prefix-map
               ("q" . #'gptel-quick)))
+
+(use-package gptel-magit
+  :hook (magit-mode . gptel-magit-install))
 
 (use-package track-changes
   :defer t) ;; copilot dependency
@@ -1090,6 +1094,15 @@ The DWIM behaviour of this command is as follows:
   (tramp-verbose 2)
   (tramp-default-method "rsync"))
 
+(use-package shell
+  :ensure nil
+  :custom
+  (explicit-shell-file-name "/bin/bash")
+  (comint-prompt-read-only t)
+  (shell-kill-buffer-on-exit t)
+  :bind (:map fab/open-prefix-map
+              ("s" . #'shell)))
+
 (use-package project
   :ensure nil
   :custom
@@ -1172,9 +1185,10 @@ The DWIM behaviour of this command is as follows:
   :hook (eglot-connect . breadcrumb-local-mode))
 
 (use-package flymake
-  :ensure nil ;; use built-in
-  ;; :custom
-  ;; (flymake-show-diagnostics-at-end-of-line 'short)
+  ;; :ensure nil ;; use built-in
+  :hook prog-mode
+  :custom
+  (flymake-show-diagnostics-at-end-of-line 'fancy)
   :bind
   (:map flymake-mode-map
         ("M-n" . #'flymake-goto-next-error)
