@@ -6,6 +6,8 @@
 
 ;;; Code:
 
+(setq debug-on-error t)
+
 (defun display-startup-time ()
   "Display the startup time and number of garbage collections."
   (message "Emacs init loaded in %.2f seconds (Full emacs-startup: %.2fs) with %d garbage collections."
@@ -24,8 +26,8 @@
  (defun fab/setup-bonus-keys (frame)
    "Reclaim keys for GUI Emacs.
 
-- When you type `Ctrl-i', Emacs sees it as `<C-i>', and NOT as 'Tab'
-- When you type `Ctrl-m', Emacs sees it as `<C-m>', and NOT as 'Return'
+- When you type `Ctrl-i', Emacs sees it as `C-i', and NOT as 'Tab'
+- When you type `Ctrl-m', Emacs sees it as `C-m', and NOT as 'Return'
 - When you type `Ctrl-[', Emacs sees it as `C-<lsb>', and not as 'Esc'
 
 That is,
@@ -36,11 +38,15 @@ That is,
    (with-selected-frame frame
      (when (display-graphic-p) ; don't remove this condition, if you want
                                         ; terminal Emacs to be usable
-       (define-key input-decode-map (kbd "C-i") [C-i])
-       (define-key input-decode-map (kbd "C-[") [C-lsb]) ; left square
+       (define-key input-decode-map (kbd "C-i") [Ctl-i])
+       (define-key input-decode-map (kbd "C-[") [Ctl-lsb]) ; left square
                                                              ; bracket
-       (define-key input-decode-map (kbd "C-m") [C-m])))))
+       (define-key input-decode-map (kbd "C-m") [Ctl-m])))))
 
+;;; Maximize frame by default
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; Disable package.el
 (setq minimal-emacs-package-initialize-and-refresh nil)
 
 ;;; pre-early-init.el ends here
