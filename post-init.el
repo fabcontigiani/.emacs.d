@@ -750,9 +750,9 @@ The DWIM behaviour of this command is as follows:
 
 (use-package org
   :defer t
-  :ensure nil
-  ;; :ensure `(org :repo "https://code.tecosaur.net/tec/org-mode.git/"
-                ;; :branch "dev")
+  ;; :ensure nil
+  :ensure `(org :repo "https://code.tecosaur.net/tec/org-mode.git/"
+                :branch "dev")
   :hook
   (org-mode . (lambda ()
                 (auto-fill-mode)
@@ -825,38 +825,40 @@ The DWIM behaviour of this command is as follows:
         ))
 
 (use-package org-latex-preview
-  :disabled
   :ensure nil
   :after org
   :config
   ;; Increase preview width
-  (plist-put org-latex-preview-appearance-options :page-width 0.8)
+  (plist-put org-latex-preview-appearance-options
+             :page-width 0.8)
 
   ;; Increase preview scale
-  (plist-put org-latex-preview-appearance-options :zoom 1.25)
+  (plist-put org-latex-preview-appearance-options
+             :zoom 1.25)
 
-  ;; Use dvisvgm to generate previews
-  ;; You don't need this, it's the default:
-  (setq org-latex-preview-process-default 'dvisvgm)
+  ;; ;; Use dvisvgm to generate previews
+  ;; ;; You don't need this, it's the default:
+  ;; (setq org-latex-preview-process-default 'dvisvgm)
+  
+  ;; Turn on `org-latex-preview-mode', it's built into Org and much faster/more
+  ;; featured than org-fragtog. (Remember to turn off/uninstall org-fragtog.)
+  (add-hook 'org-mode-hook 'org-latex-preview-mode)
 
-  ;; Turn on auto-mode, it's built into Org and much faster/more featured than
-  ;; org-fragtog. (Remember to turn off/uninstall org-fragtog.)
-  (add-hook 'org-mode-hook 'org-latex-preview-auto-mode)
+  ;; ;; Block C-n, C-p etc from opening up previews when using `org-latex-preview-mode'
+  ;; (setq org-latex-preview-mode-ignored-commands
+  ;;       '(next-line previous-line mwheel-scroll
+  ;;         scroll-up-command scroll-down-command))
 
-  ;; Block C-n and C-p from opening up previews when using auto-mode
-  (add-hook 'org-latex-preview-auto-ignored-commands 'next-line)
-  (add-hook 'org-latex-preview-auto-ignored-commands 'previous-line)
-
-  ;; Enable consistent equation numbering
-  (setq org-latex-preview-numbered t)
+  ;; ;; Enable consistent equation numbering
+  ;; (setq org-latex-preview-numbered t)
 
   ;; Bonus: Turn on live previews.  This shows you a live preview of a LaTeX
   ;; fragment and updates the preview in real-time as you edit it.
   ;; To preview only environments, set it to '(block edit-special) instead
-  (setq org-latex-preview-live t)
+  (setq org-latex-preview-mode-display-live t)
 
   ;; More immediate live-previews -- the default delay is 1 second
-  (setq org-latex-preview-live-debounce 0.25))
+  (setq org-latex-preview-mode-update-delay 0.25))
 
 (use-package corg
   :ensure (:host github :repo "isamert/corg.el")
