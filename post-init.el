@@ -578,7 +578,9 @@ The DWIM behaviour of this command is as follows:
   ;;                      list list_comprehension
   ;;                      dictionary dictionary_comprehension
   ;;                      parenthesized_expression subscript)))
-  :hook (python-base-mode . indent-bars-mode))
+  :hook (python-base-mode . indent-bars-mode)
+  :bind (:map fab/toggle-prefix-map
+              ("i" . #'indent-bars-mode)))
 
 (use-package goggles
   :hook ((prog-mode text-mode) . goggles-mode)
@@ -750,7 +752,6 @@ The DWIM behaviour of this command is as follows:
 
 (use-package org
   :defer t
-  ;; :ensure nil
   :ensure `(org :repo "https://code.tecosaur.net/tec/org-mode.git/"
                 :branch "dev")
   :hook
@@ -1112,6 +1113,7 @@ The DWIM behaviour of this command is as follows:
 
 (use-package treesit
   :ensure nil
+  :demand
   :custom
   (major-mode-remap-alist
    '((c-mode . c-ts-mode)
@@ -1122,8 +1124,10 @@ The DWIM behaviour of this command is as follows:
 	 (python "https://github.com/tree-sitter/tree-sitter-python")))
   (treesit-font-lock-level 3))
 
+(use-package jsonrpc
+  :defer t) ;; eglot dependency
+
 (use-package eglot
-  :ensure nil ;; use built-in
   :defer t
   :hook
   ((c-ts-mode c++-ts-mode python-ts-mode LaTeX-mode) . eglot-ensure)
@@ -1187,7 +1191,6 @@ The DWIM behaviour of this command is as follows:
   :hook (eglot-connect . breadcrumb-local-mode))
 
 (use-package flymake
-  ;; :ensure nil ;; use built-in
   :hook prog-mode
   :custom
   (flymake-show-diagnostics-at-end-of-line 'fancy)
@@ -1195,6 +1198,9 @@ The DWIM behaviour of this command is as follows:
   (:map flymake-mode-map
         ("M-n" . #'flymake-goto-next-error)
         ("M-p" . #'flymake-goto-prev-error)))
+
+(use-package eldoc
+  :defer t)
 
 (use-package eldoc-box
   :commands (eldoc-box-hover-at-point-mode)
@@ -1221,16 +1227,11 @@ The DWIM behaviour of this command is as follows:
 
 (use-package yaml-ts-mode
   :ensure nil
-  :mode "\\.yaml\\'")
+  :mode "\\.ya?ml\\'")
 
 (use-package yaml-pro
   :hook
   (yaml-ts-mode . yaml-pro-ts-mode))
-
-(use-package outline-yaml
-  :ensure (:host github :repo "jamescherti/outline-yaml.el")
-  :hook
-  (yaml-ts-mode . outline-yaml-minor-mode))
 
 (use-package matlab-mode
   :ensure (:host github :repo "mathworks/Emacs-MATLAB-Mode")
@@ -1241,5 +1242,9 @@ The DWIM behaviour of this command is as follows:
 (use-package rust-mode
   :mode "\\.rs\\'"
   :hook (rust-mode . eglot-ensure))
+
+(use-package platformio-mode
+  :ensure (:host github :repo "fabcontigiani/platformio-mode" :branch "dev")
+  :commands (platformio-mode))
 
 ;;; post-init.el ends here
