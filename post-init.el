@@ -1244,7 +1244,7 @@ The DWIM behaviour of this command is as follows:
   :hook (rust-mode . eglot-ensure))
 
 (use-package platformio-mode
-  :ensure (:host github :repo "fabcontigiani/platformio-mode" :branch "dev")
+  :ensure (:host github :repo "fabcontigiani/platformio-mode")
   :commands (platformio-mode))
 
 ;;; post-init.el ends here
