@@ -1013,6 +1013,7 @@ The DWIM behaviour of this command is as follows:
                            (pdf-outline-imenu-enable)
                            (pdf-annot-minor-mode)
                            (pdf-view-themed-minor-mode)
+                           (pdf-view-roll-minor-mode)
                            (pdf-sync-minor-mode))))
 
 (use-package bibtex
