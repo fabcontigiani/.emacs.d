@@ -50,17 +50,18 @@
 
   :config
   ;; Font configuration
-  (set-face-attribute 'default nil :family "IBM Plex Mono" :height 110)
-  (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 1.0)
-  (set-face-attribute 'variable-pitch nil :family "IBM Plex Sans" :height 1.0)
-  (set-face-attribute 'variable-pitch-text nil :family "IBM Plex Sans" :height 1.0)
-  (set-face-attribute 'fixed-pitch-serif nil :family "IBM Plex Mono" :height 1.0)
+  (set-face-attribute 'default nil :family "Iosevka" :height 130)
+  (set-face-attribute 'fixed-pitch nil :family "Iosevka" :height 1.0)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 1.0)
+  (set-face-attribute 'variable-pitch-text nil :family "Iosevka Aile" :height 1.0)
+  (set-face-attribute 'fixed-pitch-serif nil :family "Iosevka Etoile" :height 1.0)
 
   ;; Mode-line
   (column-number-mode)
 
   (repeat-mode)
   (electric-pair-mode)
+  (delete-selection-mode)
   
   ;; Make C-g a bit more helpful, credit to Prot:
   ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration
@@ -1129,6 +1130,7 @@ The DWIM behaviour of this command is as follows:
   :defer t) ;; eglot dependency
 
 (use-package eglot
+  :ensure nil
   :defer t
   :hook
   ((c-ts-mode c++-ts-mode python-ts-mode LaTeX-mode) . eglot-ensure)
