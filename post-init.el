@@ -48,8 +48,6 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
 
-  (select-active-regions nil "WSL clipboard fix")
-
   :config
   ;; Font configuration
   (set-face-attribute 'default nil :family "Iosevka" :height 130)
@@ -64,6 +62,22 @@
   (repeat-mode)
   (electric-pair-mode)
   (delete-selection-mode)
+
+  ;; WSL-specific setup
+  (when (and (eq system-type 'gnu/linux)
+             (getenv "WSLENV"))
+
+    ;; Clipboard fix
+    (setq select-active-regions nil)
+
+    ;; Teach Emacs how to open links in your default Windows browser
+    (let ((cmd-exe "/mnt/c/Windows/System32/cmd.exe")
+          (cmd-args '("/c" "start")))
+      (when (file-exists-p cmd-exe)
+        (setq browse-url-generic-program  cmd-exe
+              browse-url-generic-args     cmd-args
+              browse-url-browser-function 'browse-url-generic
+              search-web-default-browser 'browse-url-generic))))
   
   ;; Make C-g a bit more helpful, credit to Prot:
   ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration
@@ -707,7 +721,7 @@ The DWIM behaviour of this command is as follows:
 (use-package gptel
   :config
   (delete (assoc "ChatGPT" gptel--known-backends) gptel--known-backends)
-  (setq gptel-model 'gpt-5-mini
+  (setq gptel-model 'gpt-5.4-mini
         gptel-backend (gptel-make-gh-copilot "Copilot"))
   :bind (:map fab/llm-prefix-map
               ("l" . #'gptel)
@@ -822,7 +836,7 @@ The DWIM behaviour of this command is as follows:
                                          org-attach-id-fallback-folder-format))
   :custom-face
   (org-block ((t (:background unspecified))))
-  (org-document-title ((t (:family "IBM Plex Serif" :height 1.5))))
+  (org-document-title ((t (:family "Iosevka Etoile" :height 1.5))))
   :bind
   (:map fab/open-prefix-map
         ("a" . #'org-agenda)
@@ -865,10 +879,58 @@ The DWIM behaviour of this command is as follows:
   (setq org-latex-preview-mode-update-delay 0.25))
 
 (use-package corg
-  :ensure (:host github :repo "isamert/corg.el")
   :hook (org-mode . corg-setup))
 
+(use-package vulpea
+  :config
+  (vulpea-db-autosync-mode)
+  :custom
+  (vulpea-default-notes-directory (concat fab/org-directory "notes/"))
+  (vulpea-create-default-template '(:file-name "${slug}.org"))
+  :bind
+  (:map fab/notes-prefix-map
+        ("o" . #'vulpea-find)
+        ("i" . #'vulpea-insert)
+        ("b" . #'vulpea-find-backlink)))
+
+(use-package vulpea-ui
+  :bind
+  (:map fab/notes-prefix-map
+        ("s" . #'vulpea-ui-sidebar-toggle)))
+
+(use-package vulpea-journal
+  :config
+  (vulpea-journal-setup)
+  :custom
+  (vulpea-journal-default-template
+   `(:file-name ,(concat fab/org-directory "journal/%Y-%m-%d.org")
+                :title "%Y-%m-%d %A"
+                :tags ("journal")
+                :head "#+created: %<[%Y-%m-%d]>"))
+  :bind
+  (:map fab/notes-prefix-map
+        ("j" . #'vulpea-journal)
+        ("d" . #'vulpea-journal-date)))
+
+(use-package consult-vulpea
+  :after vulpea
+  :config
+  (consult-vulpea-mode)
+  :bind
+  (:map fab/notes-prefix-map
+        ("f" . #'consult-vulpea-find)
+        ("g" . #'consult-vulpea-grep)))
+
+(use-package citar-vulpea
+  :ensure (:repo "~/citar-vulpea/")
+  :after (citar vulpea)
+  :config
+  (citar-vulpea-mode)
+  :custom
+  (citar-vulpea-notes-directory (concat fab/org-directory "citar/")))
+
 (use-package denote
+  :disabled
   :config
   (require 'consult-denote)
   (denote-rename-buffer-mode)
@@ -891,6 +953,7 @@ The DWIM behaviour of this command is as follows:
         ("k" . denote-rename-file-keywords)))
 
 (use-package denote-journal
+  :disabled
   :hook
   (calendar-mode . denote-journal-calendar-mode)
   :config
@@ -899,9 +962,11 @@ The DWIM behaviour of this command is as follows:
               ("j" . #'denote-journal-new-or-existing-entry)))
 
 (use-package denote-org
+  :disabled
   :after denote)
 
 (use-package consult-denote
+  :disabled
   :config
   (consult-denote-mode)
   :custom
@@ -916,7 +981,7 @@ The DWIM behaviour of this command is as follows:
   (setq citar--multiple-setup (cons "<tab>"  "RET")) ; <C-i> workaround
   :config
   (require 'bibtex)
-  (require 'citar-denote)
+  ;; (require 'citar-denote)
   (defvar citar-indicator-notes-icons
     (citar-indicator-create
      :symbol (nerd-icons-mdicon
@@ -968,6 +1033,7 @@ The DWIM behaviour of this command is as follows:
   (citar-embark-mode))
 
 (use-package citar-denote
+  :disabled
   :config
   (citar-denote-mode)
   :custom
