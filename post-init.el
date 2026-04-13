@@ -15,7 +15,7 @@
   ;; User variables
   (defvar fab/dark-theme 'modus-vivendi-tinted)
   (defvar fab/light-theme 'modus-operandi)
-  (defvar fab/org-directory (expand-file-name "~/MEGA/org/"))
+  (defvar fab/org-directory (expand-file-name "~/org/"))
   (defvar fab/bibliography-dir (concat fab/org-directory "biblio/"))
   (defvar fab/bibliography-file (concat fab/bibliography-dir "references.bib"))
 
@@ -47,6 +47,8 @@
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
+
+  (select-active-regions nil "WSL clipboard fix")
 
   :config
   ;; Font configuration
@@ -306,10 +308,10 @@ The DWIM behaviour of this command is as follows:
   ;; (setq consult-project-function nil)
 
   ;; Avoid indenting when previewing org files
-  ;; (add-to-list 'consult-preview-variables '(org-startup-indented . nil))
+  (add-to-list 'consult-preview-variables '(org-startup-indented . nil))
 
   ;; Disable automatic latex preview when using consult live preview
-  ;; (add-to-list 'consult-preview-variables '(org-startup-with-latex-preview . nil))
+  (add-to-list 'consult-preview-variables '(org-startup-with-latex-preview . nil))
   )
 
 (use-package consult-dir
@@ -1063,6 +1065,32 @@ The DWIM behaviour of this command is as follows:
   :hook
   (LaTeX-mode . turn-on-cdlatex)
   (org-mode . turn-on-org-cdlatex))
+
+(use-package org-grimoire
+  :defer t
+  :config
+  (org-grimoire-setup "blog"
+                      :base-dir    "/home/fab/blog"
+                      :base-url    "https://fabcontigiani.github.io"
+                      :site-title  "fabcontigiani"
+                      :description "a blog"
+                      :author      "Fabrizio Contigiani"
+                      :theme       "simple"
+                      :reading-time t)
+  (setq org-export-headline-levels 5)
+  (require 'ox-html)
+  (defun my-org-html-special-block-advice (orig-fn special-block contents info)
+    "Convert #+begin_aside, #+begin_details, #+begin_article, and #+begin_section into native HTML5 tags."
+    (let* ((block-type (org-element-property :type special-block))
+           (type (downcase block-type)))
+      (if (member type '("aside" "details" "article" "section"))
+          (format "<%s>\n%s\n</%s>\n" type (or contents "") type)
+        (funcall orig-fn special-block contents info))))
+  (advice-add 'org-html-special-block :around #'my-org-html-special-block-advice))
+
+(use-package htmlize
+  :custom
+  (org-html-htmlize-output-type 'css))
 
 (use-package math-delimiters
   :ensure (:host github :repo "oantolin/math-delimiters")
