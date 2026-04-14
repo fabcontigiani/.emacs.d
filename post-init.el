@@ -13,8 +13,8 @@
   :ensure nil
   :init
   ;; User variables
-  (defvar fab/dark-theme 'modus-vivendi-tinted)
-  (defvar fab/light-theme 'modus-operandi)
+  (defvar fab/dark-theme 'ef-owl)
+  (defvar fab/light-theme 'ef-light)
   (defvar fab/org-directory (expand-file-name "~/org/"))
   (defvar fab/bibliography-dir (concat fab/org-directory "biblio/"))
   (defvar fab/bibliography-file (concat fab/bibliography-dir "references.bib"))
@@ -114,7 +114,8 @@ The DWIM behaviour of this command is as follows:
   :config
   (setopt modus-themes-common-palette-overrides
           modus-themes-preset-overrides-faint)
-  (modus-themes-select fab/dark-theme)
+  (modus-themes-include-derivatives-mode)
+  (modus-themes-load-theme fab/dark-theme)
   :custom
   (modus-themes-mixed-fonts t)
   (modus-themes-bold-constructs t)
@@ -128,6 +129,8 @@ The DWIM behaviour of this command is as follows:
      (t . (1.1))))
   :bind
   ("<f9>" . #'modus-themes-toggle))
+
+(use-package ef-themes)
 
 (use-package undo-fu
   :custom
@@ -901,12 +904,6 @@ The DWIM behaviour of this command is as follows:
 (use-package vulpea-journal
   :config
   (vulpea-journal-setup)
-  :custom
-  (vulpea-journal-default-template
-   `(:file-name ,(concat fab/org-directory "journal/%Y-%m-%d.org")
-                :title "%Y-%m-%d %A"
-                :tags ("journal")
-                :head "#+created: %<[%Y-%m-%d]>"))
   :bind
   (:map fab/notes-prefix-map
         ("j" . #'vulpea-journal)
@@ -925,9 +922,7 @@ The DWIM behaviour of this command is as follows:
   :ensure (:repo "~/citar-vulpea/")
   :after (citar vulpea)
   :config
-  (citar-vulpea-mode)
-  :custom
-  (citar-vulpea-notes-directory (concat fab/org-directory "citar/")))
+  (citar-vulpea-mode))
 
 (use-package denote
   :disabled
@@ -979,53 +974,16 @@ The DWIM behaviour of this command is as follows:
   :hook ((LaTeX-mode org-mode) . citar-capf-setup)
   :init
   (setq citar--multiple-setup (cons "<tab>"  "RET")) ; <C-i> workaround
-  :config
-  (require 'bibtex)
-  ;; (require 'citar-denote)
-  (defvar citar-indicator-notes-icons
-    (citar-indicator-create
-     :symbol (nerd-icons-mdicon
-              "nf-md-notebook"
-              :face 'nerd-icons-blue
-              :v-adjust -0.3)
-     :function #'citar-has-notes
-     :padding "  "
-     :tag "has:notes"))
-
-  (defvar citar-indicator-links-icons
-    (citar-indicator-create
-     :symbol (nerd-icons-octicon
-              "nf-oct-link"
-              :face 'nerd-icons-orange
-              :v-adjust -0.1)
-     :function #'citar-has-links
-     :padding "  "
-     :tag "has:links"))
-
-  (defvar citar-indicator-files-icons
-    (citar-indicator-create
-     :symbol (nerd-icons-faicon
-              "nf-fa-file"
-              :face 'nerd-icons-green
-              :v-adjust -0.1)
-     :function #'citar-has-files
-     :padding "  "
-     :tag "has:files"))
-
-  (setq citar-indicators
-        (list citar-indicator-files-icons
-              citar-indicator-notes-icons
-              citar-indicator-links-icons))
   :custom
+  (org-cite-global-bibliography `(,fab/bibliography-file))
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
-  (citar-bibliography fab/bibliography-file)
+  (citar-bibliography org-cite-global-bibliography)
   (citar-library-paths `(,fab/bibliography-dir))
-  :bind (:map fab/notes-prefix-map
-              ("c o" . citar-open)
-              :map org-mode-map
-              ("C-c b" . #'org-cite-insert)))
+  :bind
+  (:map fab/notes-prefix-map
+        ("c" . #'citar-open)))
 
 (use-package citar-embark
   :after (citar embark)
@@ -1136,7 +1094,7 @@ The DWIM behaviour of this command is as follows:
   :defer t
   :config
   (org-grimoire-setup "blog"
-                      :base-dir    "/home/fab/blog"
+                      :base-dir    (concat fab/org-directory "blog/")
                       :base-url    "https://fabcontigiani.github.io"
                       :site-title  "fabcontigiani"
                       :description "a blog"
