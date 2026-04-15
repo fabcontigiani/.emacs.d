@@ -47,6 +47,7 @@
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
+  (kill-whole-line t)
 
   :config
   ;; Font configuration
@@ -889,7 +890,6 @@ The DWIM behaviour of this command is as follows:
   (vulpea-db-autosync-mode)
   :custom
   (vulpea-default-notes-directory (concat fab/org-directory "notes/"))
-  (vulpea-create-default-template '(:file-name "${slug}.org"))
   :bind
   (:map fab/notes-prefix-map
         ("o" . #'vulpea-find)
@@ -1096,8 +1096,8 @@ The DWIM behaviour of this command is as follows:
   (org-grimoire-setup "blog"
                       :base-dir    (concat fab/org-directory "blog/")
                       :base-url    "https://fabcontigiani.github.io"
-                      :site-title  "fabcontigiani"
-                      :description "a blog"
+                      :site-title  "fabcontigiani's blog"
+                      :description "Where parentheses are balanced and thoughts are not"
                       :author      "Fabrizio Contigiani"
                       :theme       "simple"
                       :reading-time t)
