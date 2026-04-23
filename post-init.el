@@ -48,6 +48,10 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
   (kill-whole-line t)
+  (setopt save-interprogram-paste-before-kill t
+          reb-re-syntax 'string
+          window-combination-resize t
+          set-mark-command-repeat-pop t)
 
   :config
   ;; Font configuration
@@ -744,6 +748,7 @@ The DWIM behaviour of this command is as follows:
               ("q" . #'gptel-quick)))
 
 (use-package gptel-magit
+  :ensure (:host github :repo "fabcontigiani/gptel-magit")
   :hook (magit-mode . gptel-magit-install))
 
 (use-package track-changes
@@ -902,6 +907,7 @@ The DWIM behaviour of this command is as follows:
         ("s" . #'vulpea-ui-sidebar-toggle)))
 
 (use-package vulpea-journal
+  :after vulpea
   :config
   (vulpea-journal-setup)
   :bind
