@@ -48,6 +48,10 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
   (kill-whole-line t)
+  (auto-save-default t)
+  (auto-save-interval 300)
+  (auto-save-timeout 30)
+  (save-place-limit 400)
   (setopt save-interprogram-paste-before-kill t
           reb-re-syntax 'string
           window-combination-resize t
@@ -539,12 +543,7 @@ The DWIM behaviour of this command is as follows:
   :ensure nil
   :commands (save-place-mode save-place-local-mode)
   :hook
-  (after-init . save-place-mode)
-  :custom
-  (auto-save-default t)
-  (auto-save-interval 300)
-  (auto-save-timeout 30)
-  (save-place-limit 400))
+  (after-init . save-place-mode))
 
 (use-package enlight
   :init
@@ -552,15 +551,16 @@ The DWIM behaviour of this command is as follows:
     (setq initial-buffer-choice #'enlight))
   :custom
   (enlight-content
-   (concat
-    (enlight-menu
-     '(("Org Mode"
-        ("Org-Agenda (current day)" (org-agenda nil "a") "a"))
-       ("Downloads"
-        ("Transmission" transmission "t")
-        ("Downloads folder" (dired "~/Downloads") "d"))
-       ("Other"
-        ("Projects" project-switch-project "p")))))))
+   (enlight-menu
+    '(("Org"
+       ("Agenda" org-agenda "a")
+       ("Capture" org-capture "c"))
+      ("Open"
+       ("Bookmarks" consult-bookmark "b")
+       ("Recent" consult-recent-file "r")
+       ("Projects" project-switch-project "p")
+       ("Shell" (fab/without-popper #'shell) "s")
+       ("Eshell" (fab/without-popper #'eshell) "e"))))))
 
 (use-package isearch
   :ensure nil
@@ -571,10 +571,18 @@ The DWIM behaviour of this command is as follows:
   (search-whitespace-regexp ".?*"))
 
 (use-package popper
-  :bind (("C-`"   . popper-toggle)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
+  :hook
+  (on-first-input . popper-mode)
+  (on-first-input . popper-tab-line-mode)
+  :init
+  (defun fab/without-popper (command &rest args)
+    "Call COMMAND with Popper display control temporarily disabled."
+    (let ((popper-display-control nil))
+      (if args
+          (apply command args)
+        (call-interactively command))))
   :custom
+  (popper-window-height 16)
   (popper-reference-buffers
    '("\\*Messages\\*"
      "Output\\*$"
@@ -584,11 +592,10 @@ The DWIM behaviour of this command is as follows:
      eat-mode
      "\\*shell\\*"
      "\\*eshell\\*"))
-  :init
-  (popper-mode 1)
-  (popper-tab-line-mode 1)
-  :custom
-  (popper-window-height 16))
+  :bind
+  (("C-`"   . popper-toggle)
+   ("M-`"   . popper-cycle)
+   ("C-M-`" . popper-toggle-type)))
 
 (use-package minions
   :config
