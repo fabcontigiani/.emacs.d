@@ -541,13 +541,26 @@ The DWIM behaviour of this command is as follows:
   :hook
   (after-init . save-place-mode)
   :custom
+  (auto-save-default t)
+  (auto-save-interval 300)
+  (auto-save-timeout 30)
   (save-place-limit 400))
 
-;; Enable `auto-save-mode' to prevent data loss. Use `recover-file' or
-;; `recover-session' to restore unsaved changes.
-(setq auto-save-default t)
-(setq auto-save-interval 300)
-(setq auto-save-timeout 30)
+(use-package enlight
+  :init
+  (when (< (length command-line-args) 2)
+    (setq initial-buffer-choice #'enlight))
+  :custom
+  (enlight-content
+   (concat
+    (enlight-menu
+     '(("Org Mode"
+        ("Org-Agenda (current day)" (org-agenda nil "a") "a"))
+       ("Downloads"
+        ("Transmission" transmission "t")
+        ("Downloads folder" (dired "~/Downloads") "d"))
+       ("Other"
+        ("Projects" project-switch-project "p")))))))
 
 (use-package isearch
   :ensure nil
@@ -925,7 +938,6 @@ The DWIM behaviour of this command is as follows:
         ("g" . #'consult-vulpea-grep)))
 
 (use-package citar-vulpea
-  :ensure (:repo "~/citar-vulpea/")
   :after (citar vulpea)
   :config
   (citar-vulpea-mode))
