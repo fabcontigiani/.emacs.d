@@ -1142,19 +1142,10 @@ The DWIM behaviour of this command is as follows:
   (advice-add 'org-html-special-block :around #'my-org-html-special-block-advice)
 
   (require 'url-util)
-  (define-minor-mode fab/org-export-html-with-useful-ids-mode
-    "Attempt to export Org as HTML with useful link IDs.
-Instead of random IDs like \"#orga1b2c3\", use heading titles,
-made unique when necessary.
+  (defun fab/org-export-get-reference (datum info)
+    "Like `org-export-get-reference', except uses heading titles instead of random numbers.
 
 Source: https://github.com/alphapapa/unpackaged.el?tab=readme-ov-file#export-to-html-with-useful-anchors"
-    :global t
-    (if fab/org-export-html-with-useful-ids-mode
-        (advice-add #'org-export-get-reference :override #'fab/org-export-get-reference)
-      (advice-remove #'org-export-get-reference #'fab/org-export-get-reference)))
-
-  (defun fab/org-export-get-reference (datum info)
-    "Like `org-export-get-reference', except uses heading titles instead of random numbers."
     (let ((cache (plist-get info :internal-references)))
       (or (car (rassq datum cache))
           (let* ((crossrefs (plist-get info :crossrefs))
@@ -1175,13 +1166,6 @@ Source: https://github.com/alphapapa/unpackaged.el?tab=readme-ov-file#export-to-
             (plist-put info :internal-references cache)
             reference-string))))
 
-  (defun fab/slugify (str)
-    "Convert STR to a URL-friendly slug."
-    (let* ((s (downcase str))
-           (s (replace-regexp-in-string "[^[:alnum:]]+" "-" s))
-           (s (replace-regexp-in-string "^-\\|-$" "" s)))
-      (url-hexify-string s)))
-
   (defun fab/org-export-new-title-reference (datum cache)
     "Return new reference for DATUM that is unique in CACHE."
     (cl-macrolet ((inc-suffixf (place)
@@ -1194,17 +1178,17 @@ Source: https://github.com/alphapapa/unpackaged.el?tab=readme-ov-file#export-to-
                                          (suffix (if suffix-str (string-to-number suffix-str) 0)))
                                     (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
       (let* ((title (org-element-property :raw-value datum))
-             (ref (fab/slugify (substring-no-properties title)))
+             (ref (vulpea-title-to-slug (substring-no-properties title)))
              (parent (org-element-property :parent datum)))
         (while (cl-some (lambda (it) (equal ref (car it))) cache)
           (if parent
               (setf title (concat (org-element-property :raw-value parent) "--" title)
-                    ref (fab/slugify (substring-no-properties title))
+                    ref (vulpea-title-to-slug (substring-no-properties title))
                     parent (org-element-property :parent parent))
             (inc-suffixf ref)))
         ref)))
 
-  (fab/org-export-html-with-useful-ids-mode 1))
+  (advice-add #'org-export-get-reference :override #'fab/org-export-get-reference))
 
 (use-package htmlize
   :custom
