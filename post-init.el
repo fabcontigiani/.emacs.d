@@ -184,6 +184,9 @@ The DWIM behaviour of this command is as follows:
   (outline-minor-mode-cycle-filter 'bolp)
   (outline-minor-mode-use-buttons 'in-margins))
 
+(use-package outline-stars
+  :hook (outline-minor-mode . outline-stars-mode))
+
 (use-package vertico
   :hook elpaca-after-init)
 
@@ -554,7 +557,9 @@ The DWIM behaviour of this command is as follows:
    (enlight-menu
     '(("Org"
        ("Agenda" org-agenda "a")
-       ("Capture" org-capture "c"))
+       ("Capture" org-capture "c")
+       ("Inbox" (find-file (concat fab/org-directory "inbox.org")) "i")
+       ("Tasks" (find-file (concat fab/org-directory "tasks.org")) "t"))
       ("Open"
        ("Bookmarks" consult-bookmark "b")
        ("Recent" consult-recent-file "r")
@@ -906,6 +911,9 @@ The DWIM behaviour of this command is as follows:
 
   ;; More immediate live-previews -- the default delay is 1 second
   (setq org-latex-preview-mode-update-delay 0.25))
+
+(use-package org-modern
+  :hook (org-mode . org-modern-mode))
 
 (use-package corg
   :hook (org-mode . corg-setup))
