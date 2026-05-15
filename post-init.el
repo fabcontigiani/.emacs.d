@@ -6,9 +6,6 @@
 
 ;;; Code:
 
-(use-package on ;; Additional hooks for faster startup
-  :demand)
-
 (use-package emacs
   :ensure nil
   :init
@@ -913,6 +910,7 @@ The DWIM behaviour of this command is as follows:
   (setq org-latex-preview-mode-update-delay 0.25))
 
 (use-package org-modern
+  :disabled
   :hook (org-mode . org-modern-mode))
 
 (use-package corg
@@ -1245,6 +1243,14 @@ Source: https://github.com/alphapapa/unpackaged.el?tab=readme-ov-file#export-to-
   (shell-kill-buffer-on-exit t)
   :bind (:map fab/open-prefix-map
               ("s" . #'shell)))
+
+(use-package coterm
+  :config
+  (coterm-mode)
+  (coterm-auto-char-mode)
+  (coterm-auto-char-lighter-mode)
+  (with-eval-after-load 'comint
+    (define-key comint-mode-map (kbd "M-;") #'coterm-char-mode-cycle)))
 
 (use-package project
   :ensure nil

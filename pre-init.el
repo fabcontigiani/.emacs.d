@@ -50,6 +50,7 @@
   ;; Enable use-package :ensure support for Elpaca.
   (elpaca-use-package-mode))
 
+(use-package on) ;; Additional hooks for faster startup
 (use-package compat :ensure (:wait t))
 
 ;;; pre-init.el ends here
