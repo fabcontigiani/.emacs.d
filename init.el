@@ -434,7 +434,21 @@
 ;; files, wdired, unreadable dirs, and delegates to dired-directory-changed-p
 ;; for modification checks.
 (setq auto-revert-remote-files nil)
-(setq dired-auto-revert-buffer 'dired-buffer-stale-p)
+
+;; Auto refresh Dired buffers, but only if the directory's modification time has
+;; changed on disk. Using `dired-directory-changed-p' is efficient: it avoids
+;; the unconditional re-renders of `t', and skips the heavy overhead of
+;; `dired-buffer-stale-p' (which makes blocking I/O calls for every inserted
+;; subdirectory, causing UI freezes on remote/network drives).
+(setq dired-auto-revert-buffer 'dired-directory-changed-p)
+
+;; Automatically revert destination Dired buffers after file operations
+;; (e.g., copying or renaming), but skip remote directories to prevent
+;; TRAMP network latency and UI freezes.
+(defun minimal-emacs--local-dir-p (dir)
+  "Return non-nil if DIR is a local directory."
+  (not (file-remote-p dir)))
+(setq dired-do-revert-buffer #'minimal-emacs--local-dir-p)
 
 ;; dired-omit-mode
 (setq dired-omit-verbose nil
