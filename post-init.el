@@ -138,6 +138,13 @@ The DWIM behaviour of this command is as follows:
 
 (use-package ef-themes)
 
+(use-package auto-dark
+  :after (modus-themes ef-themes)
+  :config
+  (setopt custom-safe-themes t
+          auto-dark-themes `((,fab/dark-theme) (,fab/light-theme)))
+  (auto-dark-mode))
+
 (use-package undo-fu
   :custom
   (undo-no-redo t)
@@ -561,8 +568,7 @@ The DWIM behaviour of this command is as follows:
        ("Bookmarks" consult-bookmark "b")
        ("Recent" consult-recent-file "r")
        ("Projects" project-switch-project "p")
-       ("Shell" (fab/without-popper #'shell) "s")
-       ("Eshell" (fab/without-popper #'eshell) "e"))))))
+       ("Shell" (fab/without-popper #'shell) "s"))))))
 
 (use-package isearch
   :ensure nil
@@ -1251,6 +1257,11 @@ Source: https://github.com/alphapapa/unpackaged.el?tab=readme-ov-file#export-to-
   (coterm-auto-char-lighter-mode)
   (with-eval-after-load 'comint
     (define-key comint-mode-map (kbd "M-;") #'coterm-char-mode-cycle)))
+
+(use-package bash-completion
+  :after shell
+  :config
+  (bash-completion-setup))
 
 (use-package project
   :ensure nil
