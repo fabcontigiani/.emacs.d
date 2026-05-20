@@ -9,6 +9,10 @@
 (use-package emacs
   :ensure nil
   :init
+  ;; Prevent Emacs from writing custom settings to any file
+  (with-eval-after-load 'cus-edit
+    (advice-add 'custom-save-all :override #'ignore))
+
   ;; User variables
   (defvar fab/dark-theme 'ef-owl)
   (defvar fab/light-theme 'ef-light)
