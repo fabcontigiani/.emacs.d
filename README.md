@@ -74,7 +74,8 @@ Startup speed depends on hardware and disk speed. For consistent comparisons, te
 - [utility on Reddit](https://www.reddit.com/r/emacs/comments/1rsmaut/comment/oa8wrap/): "Excellent. I use this and I'm very happy with it!"
 - [Karrot_Kream](https://news.ycombinator.com/item?id=45784591): "If you don't want to use a distribution like Doom (which I don't fwiw and I've been using emacs for 20-something years), then **I'm a big fan of minimal-emacs a compact init.el and early-init.el that configures vanilla emacs into a good, default state**. From there I would pick and choose which packages..."
 - [uutangohotel](https://news.ycombinator.com/item?id=45783901): "https://github.com/jamescherti/minimal-emacs.d is a great starting point for owning your config."
-- [kleinishere](): "Came here to find this. MANY upvotes. I used Doom for a couple months. Then started considering a vanilla eMacs. I started taking notes on packages I found highly recommended and interesting. Then I found this [minimal-emacs.d]. And the author has done all that work and then made it into a "let me walk through a config" including a lot of the most recommended packages and sensible configs. Gives you the lesson of building a config, knowing what's in your config, and then being fluent in changing it. He also has more notes on his blog about the packages + more : https://www.jamescherti.com/essential-emacs-packages/ And I now feel comfortable making changes myself."
+- [kleinishere](https://news.ycombinator.com/item?id=45784429): "Came here to find this. MANY upvotes. I used Doom for a couple months. Then started considering a vanilla eMacs. I started taking notes on packages I found highly recommended and interesting. Then I found this [minimal-emacs.d]. And the author has done all that work and then made it into a "let me walk through a config" including a lot of the most recommended packages and sensible configs. Gives you the lesson of building a config, knowing what's in your config, and then being fluent in changing it. He also has more notes on his blog about the packages + more : https://www.jamescherti.com/essential-emacs-packages/ And I now feel comfortable making changes myself."
+- [microamp](https://github.com/jamescherti/minimal-emacs.d/issues/91): "...thanks for creating and maintaining the project. It's been my favourite starter kit for Emacs by far."
 
 Please share your configuration. It could serve as inspiration for other users.
 
@@ -972,6 +973,8 @@ The author also recommends reading the following article: [Emacs: Automating Tab
 
 ### Code folding
 
+NOTE: The following article provides a comprehensive guide on installing and enabling the supported folding modes: **[The Definitive Guide to Code Folding in Emacs](https://www.jamescherti.com/emacs-the-definitive-guide-to-code-folding/)**.
+
 #### Kirigami: A unified interface for opening and closing folds
 
 The [kirigami](https://github.com/jamescherti/kirigami.el) package provides a unified method to fold and unfold text in Emacs across a diverse set of Emacs modes.
@@ -1061,27 +1064,11 @@ For example, to enable `outline-minor-mode`:
 
 To enable `hs-minor-mode`, which is ideal for C-style languages and others that use braces `{}`:
 ```elisp
-;; Systems and General Purpose
 (add-hook 'c-mode-hook #'hs-minor-mode)
 (add-hook 'c++-mode-hook #'hs-minor-mode)
 (add-hook 'java-mode-hook #'hs-minor-mode)
-(add-hook 'rust-mode-hook #'hs-minor-mode)
-(add-hook 'go-mode-hook #'hs-minor-mode)
-(add-hook 'ruby-mode-hook #'hs-minor-mode)
-(add-hook 'php-mode-hook #'hs-minor-mode)
-(add-hook 'perl-mode-hook #'hs-minor-mode)
-
-;; Web and Frontend
-(add-hook 'js-mode-hook #'hs-minor-mode)
-(add-hook 'typescript-mode-hook #'hs-minor-mode)
-(add-hook 'css-mode-hook #'hs-minor-mode)
-
-;; Scripting, Data, and Infrastructure
-(add-hook 'sh-mode-hook #'hs-minor-mode) ; for bash/shell scripts
-(add-hook 'json-mode-hook #'hs-minor-mode)
-(add-hook 'lua-mode-hook #'hs-minor-mode)
-(add-hook 'nxml-mode-hook #'hs-minor-mode)
-(add-hook 'html-mode-hook #'hs-minor-mode)  ;; mhtml and html
+(add-hook 'sh-mode-hook #'hs-minor-mode)
+(add-hook 'html-mode-hook #'hs-minor-mode)
 ```
 
 #### outline-indent-minor-mode: Folding based on indentation levels
@@ -1148,36 +1135,13 @@ It is also recommended to install [treesit-fold](https://github.com/emacs-tree-s
                       :box nil
                       :weight 'bold))
 
-;; Systems and General Purpose
+;; A few examples
 (add-hook 'c-ts-mode-hook #'treesit-fold-mode)
 (add-hook 'c++-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'java-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'rust-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'go-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'ruby-ts-mode-hook #'treesit-fold-mode)
 (add-hook 'php-ts-mode-hook #'treesit-fold-mode)
-
-;; Web and Frontend
-(add-hook 'js-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'typescript-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'tsx-ts-mode-hook #'treesit-fold-mode)
 (add-hook 'css-ts-mode-hook #'treesit-fold-mode)
 (add-hook 'html-ts-mode-hook #'treesit-fold-mode)
-
-;; Scripting and Infrastructure
 (add-hook 'bash-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'cmake-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'dockerfile-ts-mode-hook #'treesit-fold-mode)
-
-;; Data and Configuration
-(add-hook 'json-ts-mode-hook #'treesit-fold-mode)
-(add-hook 'toml-ts-mode-hook #'treesit-fold-mode)
-
-;; Third-party
-;; (add-hook 'kotlin-ts-mode-hook #'treesit-fold-mode)
-;; (add-hook 'swift-ts-mode-hook #'treesit-fold-mode)
-;; (add-hook 'elixir-ts-mode-hook #'treesit-fold-mode)
-;; (add-hook 'zig-ts-mode-hook #'treesit-fold-mode)
 ```
 
 ### Asynchronous code formatting without cursor disruption
