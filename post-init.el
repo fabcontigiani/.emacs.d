@@ -60,11 +60,11 @@
 
   :config
   ;; Font configuration
-  (set-face-attribute 'default nil :family "Iosevka" :height 130)
-  (set-face-attribute 'fixed-pitch nil :family "Iosevka" :height 1.0)
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 1.0)
-  (set-face-attribute 'variable-pitch-text nil :family "Iosevka Aile" :height 1.0)
-  (set-face-attribute 'fixed-pitch-serif nil :family "Iosevka Etoile" :height 1.0)
+  (set-face-attribute 'default nil :family "IBM Plex Mono" :height 120)
+  (set-face-attribute 'fixed-pitch nil :family "IBM Plex Mono" :height 1.0)
+  (set-face-attribute 'variable-pitch nil :family "IBM Plex Sans" :height 1.0)
+  (set-face-attribute 'variable-pitch-text nil :family "IBM Plex Sans" :height 1.0)
+  (set-face-attribute 'fixed-pitch-serif nil :family "IBM Plex Mono" :height 1.0)
 
   ;; Mode-line
   (column-number-mode)
@@ -196,7 +196,8 @@ The DWIM behaviour of this command is as follows:
   :hook (outline-minor-mode . outline-stars-mode))
 
 (use-package vertico
-  :hook elpaca-after-init)
+  :config
+  (vertico-mode))
 
 (use-package vertico-directory
   :ensure nil
@@ -220,7 +221,8 @@ The DWIM behaviour of this command is as follows:
   :config (vertico-multiform-mode))
 
 (use-package marginalia
-  :hook elpaca-after-init)
+  :config
+  (marginalia-mode))
 
 (use-package orderless
   :custom
@@ -877,7 +879,7 @@ The DWIM behaviour of this command is as follows:
                                          org-attach-id-fallback-folder-format))
   :custom-face
   (org-block ((t (:background unspecified))))
-  (org-document-title ((t (:family "Iosevka Etoile" :height 1.5))))
+  (org-document-title ((t (:family "IBM Plex Serif" :height 1.5))))
   :bind
   (:map fab/open-prefix-map
         ("a" . #'org-agenda)
